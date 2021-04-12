@@ -1,6 +1,6 @@
 /// <reference types="react" />
 import { DIRECTIONS } from './constants';
-export declare type SlideDirections = typeof DIRECTIONS.RIGHT | typeof DIRECTIONS.LEFT | undefined;
+export declare type SlideDirections = typeof DIRECTIONS.RIGHT | typeof DIRECTIONS.LEFT | typeof DIRECTIONS.NONE;
 export interface TouchPoint {
     clientX: number;
     clientY: number;

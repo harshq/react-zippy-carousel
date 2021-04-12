@@ -3,7 +3,7 @@ import { DIRECTIONS } from './constants';
 export type SlideDirections =
     | typeof DIRECTIONS.RIGHT
     | typeof DIRECTIONS.LEFT
-    | undefined;
+    | typeof DIRECTIONS.NONE;
 
 export interface TouchPoint {
     clientX: number;

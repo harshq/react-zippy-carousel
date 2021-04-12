@@ -29,6 +29,7 @@ var React__namespace = /*#__PURE__*/_interopNamespace(React);
 var DIRECTIONS = {
     RIGHT: 'right',
     LEFT: 'left',
+    NONE: 'none'
 };
 
 var useTouchGesture = function (_a) {
@@ -38,7 +39,7 @@ var useTouchGesture = function (_a) {
         clientY: 0,
     }), startTouch = _d[0], setStartTouch = _d[1];
     var _e = React__namespace.useState(0), swipeAmount = _e[0], setSwipeAmount = _e[1];
-    var _f = React__namespace.useState(), direction = _f[0], setDirection = _f[1];
+    var _f = React__namespace.useState(DIRECTIONS.NONE), direction = _f[0], setDirection = _f[1];
     var _g = React__namespace.useState(false), isSwiping = _g[0], setIsSwiping = _g[1];
     var handleTouchStart = function (e) {
         if (shouldStopListening) {
@@ -105,7 +106,7 @@ var useTouchGesture = function (_a) {
         if (onSwipeEnd) {
             onSwipeEnd(swipeAmount, direction, elementWidth);
         }
-        setDirection('');
+        setDirection(DIRECTIONS.NONE);
         setIsSwiping(false);
     };
     var handlers = {

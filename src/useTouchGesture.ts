@@ -17,7 +17,7 @@ export const useTouchGesture = ({
         clientY: 0,
     });
     const [swipeAmount, setSwipeAmount] = React.useState<number>(0);
-    const [direction, setDirection] = React.useState<SlideDirections>();
+    const [direction, setDirection] = React.useState<SlideDirections>(DIRECTIONS.NONE);
 
     const [isSwiping, setIsSwiping] = React.useState(false);
 
@@ -100,7 +100,7 @@ export const useTouchGesture = ({
             onSwipeEnd(swipeAmount, direction, elementWidth);
         }
 
-        setDirection('');
+        setDirection(DIRECTIONS.NONE);
         setIsSwiping(false);
     };
 
