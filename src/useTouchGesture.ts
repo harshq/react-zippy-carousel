@@ -1,30 +1,8 @@
 import * as React from 'react';
 import { DIRECTIONS } from './constants';
-import {SlideDirections, TouchPoint} from './types';
+import { SlideDirections, TouchPoint, SwipeProps } from './types';
 
-interface SwipeProps {
-    buffer?: TouchPoint;
-    onSwipeStart?: (startTouch: TouchPoint) => void;
-    onSwipeLeft?: () => void;
-    onSwipeRight?: () => void;
-    onChangeDirection?: (direction: string) => void;
-    onSwipe?: (amount: number) => void;
-    onSwipeEnd?: (
-        amount: number,
-        direction: SlideDirections,
-        elementWidth: number,
-    ) => void;
-    shouldStopListening?: boolean;
-}
-
-export interface SwipeHandlers {
-    onTouchStart: (e: React.TouchEvent<Element>) => void;
-    onTouchMove: (e: React.TouchEvent<Element>) => void;
-    onTouchEnd: (e: React.TouchEvent<Element>) => void;
-    onTouchCancel: (e: React.TouchEvent<Element>) => void;
-}
-
-export function useSwipe({
+export const useTouchGesture = ({
     buffer = { clientX: 0, clientY: 0 },
     onSwipeStart,
     onSwipeLeft,
@@ -33,7 +11,7 @@ export function useSwipe({
     onSwipe,
     onSwipeEnd,
     shouldStopListening = false,
-}: SwipeProps) {
+}: SwipeProps) => {
     const [startTouch, setStartTouch] = React.useState<TouchPoint>({
         clientX: 0,
         clientY: 0,

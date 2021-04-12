@@ -1,3 +1,1 @@
-export function foo(param: string) {
-    return "Hello " + param;
-  }
+export { useTouchGesture } from './useTouchGesture';
