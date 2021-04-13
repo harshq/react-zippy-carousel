@@ -3,7 +3,7 @@
 React hook for carousels. Supports gestures in mobile browsers.
 
 ## Demo
-![alt text](https://raw.githubusercontent.com/harshq/react-zippy-carousel-example/9840c4c9c2f2d31b4ae661c606fff1494723b1d1/example.gif "example")
+![alt text](https://raw.githubusercontent.com/harshq/react-zippy-carousel-example/master/example.gif "example")
 
 ## Installation
 
