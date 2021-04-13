@@ -1,6 +1,10 @@
 # react-zippy-carousel [![npm version](https://badge.fury.io/js/react-zippy-carousel.svg)](https://badge.fury.io/js/react-zippy-carousel)
 
 React hook for carousels. Supports gestures in mobile browsers.
+- uses css animations
+- renders only 3 slides at any given time
+- supports autoplay, gestures and snap to reset
+- very light weight
 
 ## Demo
 ![alt text](https://raw.githubusercontent.com/harshq/react-zippy-carousel-example/master/example.gif "example")
