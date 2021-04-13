@@ -2,6 +2,7 @@ import React from 'react';
 import { DIRECTIONS } from './constants';
 import { SlideDirections, TouchPoint, SwipeProps } from './types';
 
+// NOTE: we only care about the X axis for carousel.
 export const useTouchGesture = ({
     buffer = { clientX: 0, clientY: 0 },
     onSwipeStart,

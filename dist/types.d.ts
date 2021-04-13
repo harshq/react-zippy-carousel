@@ -1,10 +1,11 @@
 import React from 'react';
-import { DIRECTIONS } from './constants';
+import { DIRECTIONS, ACTION, INIT, SLIDE_PREVIOUS, SLIDE_NEXT, SLIDE_TO_IMAGE, SWIPE_SUCCESS, SWIPE_FAIL, SET_OFFSET, UPDATE_ITEMS } from './constants';
 export declare type SlideDirections = typeof DIRECTIONS.RIGHT | typeof DIRECTIONS.LEFT | typeof DIRECTIONS.NONE;
 export interface TouchPoint {
     clientX: number;
     clientY: number;
 }
+export declare type Actions = typeof ACTION.NEXT | typeof ACTION.PREV | undefined;
 export interface SwipeProps {
     buffer?: TouchPoint;
     onSwipeStart?: (e: React.TouchEvent) => void;
@@ -21,3 +22,61 @@ export interface SwipeHandlers {
     onTouchEnd: (e: React.TouchEvent<Element>) => void;
     onTouchCancel: (e: React.TouchEvent<Element>) => void;
 }
+export interface SliderProps {
+    sliderContainerRef: React.RefObject<HTMLDivElement>;
+    autoplay?: boolean;
+    images: any[];
+}
+export interface SliderState {
+    items: any[];
+    offset: number;
+    current: number;
+    withAnimation: boolean;
+    lastAction: Actions;
+    shouldUpdateArray: boolean;
+}
+interface Init {
+    type: typeof INIT;
+    offset: number;
+    items: any[];
+}
+interface SlidePrevious {
+    type: typeof SLIDE_PREVIOUS;
+    offset: number;
+    numberOfImages: number;
+}
+interface SlideNext {
+    type: typeof SLIDE_NEXT;
+    offset: number;
+    numberOfImages: number;
+}
+/**
+ * Fired when user clicks on an image outside the context of the slider
+ * like on a thumbnail list of all images
+ * and we want to update the slider image to the image user clicked on
+ */
+interface SlideToImage {
+    type: typeof SLIDE_TO_IMAGE;
+    imageToSlideTo: number;
+}
+interface SwipeSuccess {
+    type: typeof SWIPE_SUCCESS;
+    offset: number;
+    action: Actions;
+    numberOfImages: number;
+}
+interface SwipeFail {
+    type: typeof SWIPE_FAIL;
+    offset: number;
+}
+interface SetOffset {
+    type: typeof SET_OFFSET;
+    offset: number;
+    withAnimation: boolean;
+}
+interface UpdateArray {
+    type: typeof UPDATE_ITEMS;
+    items: any[];
+}
+export declare type SliderAction = Init | SetOffset | SwipeSuccess | SwipeFail | SlideNext | SlideToImage | SlidePrevious | UpdateArray;
+export {};
