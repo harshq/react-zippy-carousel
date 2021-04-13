@@ -35,7 +35,7 @@ const {
 
 ## Example 
 
-[demo project](https://github.com/harshq/react-zippy-carousel-example)
+[demo project](https://github.com/harshq/react-zippy-carousel-example/blob/master/src/App.js)
 
 ## License
 
