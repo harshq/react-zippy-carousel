@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { DIRECTIONS } from './constants';
 import { SlideDirections, TouchPoint, SwipeProps } from './types';
 
@@ -34,7 +34,7 @@ export const useTouchGesture = ({
         setStartTouch(initialTouch);
 
         if (onSwipeStart) {
-            onSwipeStart(initialTouch);
+            onSwipeStart(e);
         }
     };
 
@@ -62,7 +62,7 @@ export const useTouchGesture = ({
         setSwipeAmount(diffFromStartX + buffer.clientX);
 
         if (onSwipe) {
-            onSwipe(diffFromStartX + buffer.clientX);
+            onSwipe(e);
         }
 
         // diffFromStartX will a positive or negative value depending on the
@@ -95,9 +95,8 @@ export const useTouchGesture = ({
             return;
         }
 
-        const elementWidth = e.currentTarget.getBoundingClientRect().width;
         if (onSwipeEnd) {
-            onSwipeEnd(swipeAmount, direction, elementWidth);
+            onSwipeEnd(e);
         }
 
         setDirection(DIRECTIONS.NONE);
@@ -111,5 +110,5 @@ export const useTouchGesture = ({
         onTouchCancel: handleTouchEnd,
     };
 
-    return { swipeAmount, isSwiping, handlers };
+    return { startTouch, swipeAmount, isSwiping, direction, handlers };
 }

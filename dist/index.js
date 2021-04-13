@@ -4,27 +4,9 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 var React = require('react');
 
-function _interopNamespace(e) {
-  if (e && e.__esModule) return e;
-  var n = Object.create(null);
-  if (e) {
-    Object.keys(e).forEach(function (k) {
-      if (k !== 'default') {
-        var d = Object.getOwnPropertyDescriptor(e, k);
-        Object.defineProperty(n, k, d.get ? d : {
-          enumerable: true,
-          get: function () {
-            return e[k];
-          }
-        });
-      }
-    });
-  }
-  n['default'] = e;
-  return Object.freeze(n);
-}
+function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
-var React__namespace = /*#__PURE__*/_interopNamespace(React);
+var React__default = /*#__PURE__*/_interopDefaultLegacy(React);
 
 var DIRECTIONS = {
     RIGHT: 'right',
@@ -34,13 +16,13 @@ var DIRECTIONS = {
 
 var useTouchGesture = function (_a) {
     var _b = _a.buffer, buffer = _b === void 0 ? { clientX: 0, clientY: 0 } : _b, onSwipeStart = _a.onSwipeStart, onSwipeLeft = _a.onSwipeLeft, onSwipeRight = _a.onSwipeRight, onChangeDirection = _a.onChangeDirection, onSwipe = _a.onSwipe, onSwipeEnd = _a.onSwipeEnd, _c = _a.shouldStopListening, shouldStopListening = _c === void 0 ? false : _c;
-    var _d = React__namespace.useState({
+    var _d = React__default['default'].useState({
         clientX: 0,
         clientY: 0,
     }), startTouch = _d[0], setStartTouch = _d[1];
-    var _e = React__namespace.useState(0), swipeAmount = _e[0], setSwipeAmount = _e[1];
-    var _f = React__namespace.useState(DIRECTIONS.NONE), direction = _f[0], setDirection = _f[1];
-    var _g = React__namespace.useState(false), isSwiping = _g[0], setIsSwiping = _g[1];
+    var _e = React__default['default'].useState(0), swipeAmount = _e[0], setSwipeAmount = _e[1];
+    var _f = React__default['default'].useState(DIRECTIONS.NONE), direction = _f[0], setDirection = _f[1];
+    var _g = React__default['default'].useState(false), isSwiping = _g[0], setIsSwiping = _g[1];
     var handleTouchStart = function (e) {
         if (shouldStopListening) {
             return;
@@ -51,7 +33,7 @@ var useTouchGesture = function (_a) {
         };
         setStartTouch(initialTouch);
         if (onSwipeStart) {
-            onSwipeStart(initialTouch);
+            onSwipeStart(e);
         }
     };
     // Negative value => swiped right. Positive value => swiped left.
@@ -73,7 +55,7 @@ var useTouchGesture = function (_a) {
         // set X axis difference as swipe amount with the buffer
         setSwipeAmount(diffFromStartX + buffer.clientX);
         if (onSwipe) {
-            onSwipe(diffFromStartX + buffer.clientX);
+            onSwipe(e);
         }
         // diffFromStartX will a positive or negative value depending on the
         // direction the element was swiped to.
@@ -102,9 +84,8 @@ var useTouchGesture = function (_a) {
         if (shouldStopListening) {
             return;
         }
-        var elementWidth = e.currentTarget.getBoundingClientRect().width;
         if (onSwipeEnd) {
-            onSwipeEnd(swipeAmount, direction, elementWidth);
+            onSwipeEnd(e);
         }
         setDirection(DIRECTIONS.NONE);
         setIsSwiping(false);
@@ -115,7 +96,7 @@ var useTouchGesture = function (_a) {
         onTouchEnd: handleTouchEnd,
         onTouchCancel: handleTouchEnd,
     };
-    return { swipeAmount: swipeAmount, isSwiping: isSwiping, handlers: handlers };
+    return { startTouch: startTouch, swipeAmount: swipeAmount, isSwiping: isSwiping, direction: direction, handlers: handlers };
 };
 
 exports.useTouchGesture = useTouchGesture;

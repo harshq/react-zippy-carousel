@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 var DIRECTIONS = {
     RIGHT: 'right',
@@ -25,7 +25,7 @@ var useTouchGesture = function (_a) {
         };
         setStartTouch(initialTouch);
         if (onSwipeStart) {
-            onSwipeStart(initialTouch);
+            onSwipeStart(e);
         }
     };
     // Negative value => swiped right. Positive value => swiped left.
@@ -47,7 +47,7 @@ var useTouchGesture = function (_a) {
         // set X axis difference as swipe amount with the buffer
         setSwipeAmount(diffFromStartX + buffer.clientX);
         if (onSwipe) {
-            onSwipe(diffFromStartX + buffer.clientX);
+            onSwipe(e);
         }
         // diffFromStartX will a positive or negative value depending on the
         // direction the element was swiped to.
@@ -76,9 +76,8 @@ var useTouchGesture = function (_a) {
         if (shouldStopListening) {
             return;
         }
-        var elementWidth = e.currentTarget.getBoundingClientRect().width;
         if (onSwipeEnd) {
-            onSwipeEnd(swipeAmount, direction, elementWidth);
+            onSwipeEnd(e);
         }
         setDirection(DIRECTIONS.NONE);
         setIsSwiping(false);
@@ -89,7 +88,7 @@ var useTouchGesture = function (_a) {
         onTouchEnd: handleTouchEnd,
         onTouchCancel: handleTouchEnd,
     };
-    return { swipeAmount: swipeAmount, isSwiping: isSwiping, handlers: handlers };
+    return { startTouch: startTouch, swipeAmount: swipeAmount, isSwiping: isSwiping, direction: direction, handlers: handlers };
 };
 
 export { useTouchGesture };

@@ -1,5 +1,5 @@
 {
-  "name": "react-zippy-slider",
+  "name": "react-zippy-carousel",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
@@ -8,12 +8,12 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rollup -c",
-    "test": "jest --config=jest.config.json",
+    "test": "jest",
     "prepublish": "npm test"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/harshq/react-zippy-slider.git"
+    "url": "git+https://github.com/harshq/react-zippy-carousel.git"
   },
   "files": [
     "dist"
@@ -26,9 +26,9 @@
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/harshq/react-zippy-slider/issues"
+    "url": "https://github.com/harshq/react-zippy-carousel/issues"
   },
-  "homepage": "https://github.com/harshq/react-zippy-slider#readme",
+  "homepage": "https://github.com/harshq/react-zippy-carousel#readme",
   "devDependencies": {
     "@types/jest": "^26.0.22",
     "@types/react": "^17.0.3",

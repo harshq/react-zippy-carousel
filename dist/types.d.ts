@@ -1,4 +1,4 @@
-/// <reference types="react" />
+import React from 'react';
 import { DIRECTIONS } from './constants';
 export declare type SlideDirections = typeof DIRECTIONS.RIGHT | typeof DIRECTIONS.LEFT | typeof DIRECTIONS.NONE;
 export interface TouchPoint {
@@ -7,12 +7,12 @@ export interface TouchPoint {
 }
 export interface SwipeProps {
     buffer?: TouchPoint;
-    onSwipeStart?: (startTouch: TouchPoint) => void;
+    onSwipeStart?: (e: React.TouchEvent) => void;
     onSwipeLeft?: () => void;
     onSwipeRight?: () => void;
     onChangeDirection?: (direction: string) => void;
-    onSwipe?: (amount: number) => void;
-    onSwipeEnd?: (amount: number, direction: SlideDirections, elementWidth: number) => void;
+    onSwipe?: (e: React.TouchEvent) => void;
+    onSwipeEnd?: (e: React.TouchEvent) => void;
     shouldStopListening?: boolean;
 }
 export interface SwipeHandlers {
