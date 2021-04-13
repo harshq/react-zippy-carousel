@@ -25,7 +25,7 @@ import { CarouselProps } from './types';
  * @returns items: 3 or less element array that.
  *
  */
-export declare const useCarousel: ({ carouselContainerRef, images, autoplay, }: CarouselProps) => {
+export declare const useCarousel: ({ carouselContainerRef, list, autoplay, interval, swipeThreshhold }: CarouselProps) => {
     handlers: {
         onTouchStart: (e: React.TouchEvent<Element>) => void;
         onTouchMove: (e: React.TouchEvent<Element>) => void;
@@ -40,6 +40,6 @@ export declare const useCarousel: ({ carouselContainerRef, images, autoplay, }: 
     slideNext: () => void;
     slidePrev: () => void;
     currentImage: number;
-    items: any[];
+    slides: any[];
     slideToImage: (imageToSlide: number) => void;
 };

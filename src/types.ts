@@ -46,12 +46,14 @@ export interface CarouselProps {
     carouselContainerRef: React.RefObject<HTMLDivElement>;
     autoplay?: boolean;
     // tslint:disable-next-line: no-any
-    images: any[];
+    list: any[];
+    interval?: number;
+    swipeThreshold?: number;
 }
 
 export interface CarouselState {
     // tslint:disable-next-line: no-any
-    items: any[];
+    slides: any[];
     offset: number;
     current: number;
     withAnimation: boolean;
@@ -63,19 +65,19 @@ export interface CarouselState {
 /*
  * Fired on init
  * offset: set to sliderWidth. Users see the 2nd element in the list initially
- * items: initial items array after initalizeImageArray method
+ * slides: initial slides array after initalizeImageArray method
  */
 interface Init {
     type: typeof INIT;
     offset: number;
     // tslint:disable-next-line: no-any
-    items: any[];
+    slides: any[];
 }
 
 /*
  * Fired when user click prev
  * offset: set to 0. User should see the carousel animated to 1st element
- * numberOfImages: number of items in the passed array. Used to calculate the prev index
+ * numberOfImages: number of slides in the passed array. Used to calculate the prev index
  */
 interface SlidePrevious {
     type: typeof SLIDE_PREVIOUS;
@@ -86,7 +88,7 @@ interface SlidePrevious {
 /*
  * Fired when user click prev
  * offset: set to (sliderWidth * 2). User should see the carousel animated to 3rd element
- * numberOfImages: number of items in the passed array. Used to calculate the prev index
+ * numberOfImages: number of slides in the passed array. Used to calculate the prev index
  */
 interface SlideNext {
     type: typeof SLIDE_NEXT;
@@ -108,7 +110,7 @@ interface SlideToImage {
  * Fired when user swipes more than the SWIPE_THRESHOLD
  * offset: will be set to either 0 or (sliderWidth * 2) depending on the swiped direction.
  * action: either be next or prev
- * numberOfImages: number of items in the passed array. Used to calculate the prev index
+ * numberOfImages: number of slides in the passed array. Used to calculate the prev index
  */
 interface SwipeSuccess {
     type: typeof SWIPE_SUCCESS;
@@ -138,13 +140,13 @@ interface SetOffset {
 }
 
 /*
- * Updates the items array when navigated to next/prev
- * items: new array to be set as items
+ * Updates the slides array when navigated to next/prev
+ * slides: new array to be set as slides
  */
 interface UpdateArray {
     type: typeof UPDATE_ITEMS;
     // tslint:disable-next-line: no-any
-    items: any[];
+    slides: any[];
 }
 
 export type CarouselAction =

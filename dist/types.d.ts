@@ -25,10 +25,12 @@ export interface SwipeHandlers {
 export interface CarouselProps {
     carouselContainerRef: React.RefObject<HTMLDivElement>;
     autoplay?: boolean;
-    images: any[];
+    list: any[];
+    interval?: number;
+    swipeThreshhold?: number;
 }
 export interface CarouselState {
-    items: any[];
+    slides: any[];
     offset: number;
     current: number;
     withAnimation: boolean;
@@ -38,7 +40,7 @@ export interface CarouselState {
 interface Init {
     type: typeof INIT;
     offset: number;
-    items: any[];
+    slides: any[];
 }
 interface SlidePrevious {
     type: typeof SLIDE_PREVIOUS;
@@ -76,7 +78,7 @@ interface SetOffset {
 }
 interface UpdateArray {
     type: typeof UPDATE_ITEMS;
-    items: any[];
+    slides: any[];
 }
 export declare type CarouselAction = Init | SetOffset | SwipeSuccess | SwipeFail | SlideNext | SlideToImage | SlidePrevious | UpdateArray;
 export {};

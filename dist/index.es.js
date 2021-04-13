@@ -205,7 +205,7 @@ var initalizeImageArray = function (items) {
 var carouselReducer = function (state, action) {
     switch (action.type) {
         case INIT: {
-            return __assign(__assign({}, state), { offset: action.offset, items: action.items, shouldUpdateArray: false, lastAction: undefined });
+            return __assign(__assign({}, state), { offset: action.offset, slides: action.slides, shouldUpdateArray: false, lastAction: undefined });
         }
         case SLIDE_PREVIOUS: {
             var current = calcPrev(action.numberOfImages, state.current);
@@ -231,17 +231,15 @@ var carouselReducer = function (state, action) {
             return __assign(__assign({}, state), { offset: action.offset, withAnimation: action.withAnimation });
         }
         case UPDATE_ITEMS: {
-            return __assign(__assign({}, state), { items: action.items, shouldUpdateArray: false, lastAction: undefined });
+            return __assign(__assign({}, state), { slides: action.slides, shouldUpdateArray: false, lastAction: undefined });
         }
         default:
             return state;
     }
 };
 
-var AUTOPLAY_INTERVAL = 5000;
-var SWIPE_THRESHOLD = 0.3;
 var initialCarouselState = {
-    items: [],
+    slides: [],
     offset: 0,
     current: 0,
     withAnimation: false,
@@ -274,7 +272,7 @@ var initialCarouselState = {
  *
  */
 var useCarousel = function (_a) {
-    var carouselContainerRef = _a.carouselContainerRef, images = _a.images, _b = _a.autoplay, autoplay = _b === void 0 ? false : _b;
+    var carouselContainerRef = _a.carouselContainerRef, list = _a.list, _b = _a.autoplay, autoplay = _b === void 0 ? false : _b, _c = _a.interval, interval = _c === void 0 ? 5000 : _c, _d = _a.swipeThreshhold, swipeThreshhold = _d === void 0 ? 0.3 : _d;
     // keeps the timer
     var timer = React.useRef(0);
     // keeps the slider width
@@ -282,31 +280,31 @@ var useCarousel = function (_a) {
     // init autoplay
     React.useEffect(function () { return startAutoplay(); }, []);
     // reducer to keep the slider state
-    var _c = React.useReducer(carouselReducer, initialCarouselState), state = _c[0], dispatch = _c[1];
+    var _e = React.useReducer(carouselReducer, initialCarouselState), state = _e[0], dispatch = _e[1];
     var init = function () {
         carouselWidth.current = carouselContainerRef.current
             ? carouselContainerRef.current.offsetWidth
             : 0;
-        var items = initalizeImageArray(images);
-        dispatch({ type: INIT, offset: carouselWidth.current, items: items });
+        var slides = initalizeImageArray(list);
+        dispatch({ type: INIT, offset: carouselWidth.current, slides: slides });
     };
     // Starting point on the slider
     // Will update if the slider width or images array changed
     React.useEffect(init, [
         carouselContainerRef.current ? carouselContainerRef.current.offsetWidth : 0,
-        images.length,
+        list.length,
     ]);
     // goto next slide width animation
     // restart autoplay
     // if the 'state.lastAction' is not cleared or array has 1 image, prevent action
     var slideNext = function () {
-        if (state.lastAction || images.length < 2) {
+        if (state.lastAction || list.length < 2) {
             return;
         }
         startAutoplay();
         dispatch({
             type: SLIDE_NEXT,
-            numberOfImages: images.length,
+            numberOfImages: list.length,
             offset: carouselWidth.current * 2,
         });
     };
@@ -314,13 +312,13 @@ var useCarousel = function (_a) {
     // restart autoplay
     // if the 'state.lastAction' is not cleared or array has 1 image, prevent action
     var slidePrev = function () {
-        if (state.lastAction || images.length < 2) {
+        if (state.lastAction || list.length < 2) {
             return;
         }
         startAutoplay();
         dispatch({
             type: SLIDE_PREVIOUS,
-            numberOfImages: images.length,
+            numberOfImages: list.length,
             offset: 0,
         });
     };
@@ -333,28 +331,28 @@ var useCarousel = function (_a) {
     };
     // start autoplay
     var startAutoplay = function () {
-        if (images.length >= 2 && autoplay) {
+        if (list.length >= 2 && autoplay) {
             clearInterval(timer.current);
             timer.current = window.setInterval(function () {
                 slideNext();
-            }, AUTOPLAY_INTERVAL);
+            }, interval);
         }
     };
     var clearAutoplay = function () {
         clearInterval(timer.current);
     };
-    var _d = useTouchGesture({
+    var _f = useTouchGesture({
         shouldStopListening: state.withAnimation,
         buffer: { clientY: 0, clientX: carouselWidth.current },
         onSwipeStart: function () { return clearAutoplay(); },
         onSwipe: function (e) {
-            if (images.length < 2) {
+            if (list.length < 2) {
                 return;
             }
             dispatch({ type: SET_OFFSET, offset: swipeAmount, withAnimation: false });
         },
         onSwipeEnd: function () {
-            if (images.length < 2 || !direction) {
+            if (list.length < 2 || !direction) {
                 return;
             }
             startAutoplay();
@@ -362,7 +360,7 @@ var useCarousel = function (_a) {
             var swipeEndFraction = direction === DIRECTIONS.LEFT
                 ? swipeEndPosition - Math.trunc(swipeEndPosition)
                 : 1 - (swipeEndPosition - Math.trunc(swipeEndPosition));
-            if (Math.abs(swipeEndFraction) > SWIPE_THRESHOLD) {
+            if (Math.abs(swipeEndFraction) > swipeThreshhold) {
                 // successful swipe
                 var jumpDistance = direction === DIRECTIONS.RIGHT ? 0 : carouselWidth.current * 2;
                 var action = direction === DIRECTIONS.RIGHT ? ACTION.PREV : ACTION.NEXT;
@@ -370,7 +368,7 @@ var useCarousel = function (_a) {
                     type: SWIPE_SUCCESS,
                     offset: jumpDistance,
                     action: action,
-                    numberOfImages: images.length,
+                    numberOfImages: list.length,
                 });
             }
             else {
@@ -378,13 +376,13 @@ var useCarousel = function (_a) {
                 dispatch({ type: SWIPE_FAIL, offset: carouselWidth.current });
             }
         },
-    }), handlers = _d.handlers, swipeAmount = _d.swipeAmount, direction = _d.direction;
+    }), handlers = _f.handlers, swipeAmount = _f.swipeAmount, direction = _f.direction;
     // onTransitionEnd handler for 'ul'
     var onTransitionEnd = function () {
         if (state.shouldUpdateArray) {
             var reverse = state.lastAction === ACTION.NEXT ? false : true;
-            var items = manipulateArray(state.items, reverse);
-            dispatch({ type: UPDATE_ITEMS, items: items });
+            var slides = manipulateArray(state.slides, reverse);
+            dispatch({ type: UPDATE_ITEMS, slides: slides });
         }
         resetOffset();
     };
@@ -404,7 +402,7 @@ var useCarousel = function (_a) {
         slideNext: slideNext,
         slidePrev: slidePrev,
         currentImage: state.current,
-        items: state.items.slice(0, 3),
+        slides: state.slides.slice(0, 3),
         slideToImage: function (imageToSlide) { return slideToImage(imageToSlide); },
     };
 };

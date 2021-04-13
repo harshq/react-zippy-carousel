@@ -16,11 +16,8 @@ import { useTouchGesture } from './useTouchGesture';
 import { carouselReducer } from './carouselReducer';
 import { initalizeImageArray, manipulateArray } from './utils';
 
-const AUTOPLAY_INTERVAL = 5000;
-const SWIPE_THRESHOLD = 0.3;
-
 const initialCarouselState: CarouselState = {
-    items: [],
+    slides: [],
     offset: 0,
     current: 0,
     withAnimation: false,
@@ -56,8 +53,10 @@ const initialCarouselState: CarouselState = {
  */
 export const useCarousel = ({
     carouselContainerRef,
-    images,
+    list,
     autoplay = false,
+    interval = 5000,
+    swipeThreshold = 0.3
 }: CarouselProps) => {
     // keeps the timer
     const timer = React.useRef(0);
@@ -76,28 +75,28 @@ export const useCarousel = ({
             ? carouselContainerRef.current.offsetWidth
             : 0;
 
-        const items = initalizeImageArray(images);
-        dispatch({ type: INIT, offset: carouselWidth.current, items });
+        const slides = initalizeImageArray(list);
+        dispatch({ type: INIT, offset: carouselWidth.current, slides });
     };
 
     // Starting point on the slider
     // Will update if the slider width or images array changed
     React.useEffect(init, [
         carouselContainerRef.current ? carouselContainerRef.current.offsetWidth : 0,
-        images.length,
+        list.length,
     ]);
 
     // goto next slide width animation
     // restart autoplay
     // if the 'state.lastAction' is not cleared or array has 1 image, prevent action
     const slideNext = () => {
-        if (state.lastAction || images.length < 2) {
+        if (state.lastAction || list.length < 2) {
             return;
         }
         startAutoplay();
         dispatch({
             type: SLIDE_NEXT,
-            numberOfImages: images.length,
+            numberOfImages: list.length,
             offset: carouselWidth.current * 2,
         });
     };
@@ -106,13 +105,13 @@ export const useCarousel = ({
     // restart autoplay
     // if the 'state.lastAction' is not cleared or array has 1 image, prevent action
     const slidePrev = () => {
-        if (state.lastAction || images.length < 2) {
+        if (state.lastAction || list.length < 2) {
             return;
         }
         startAutoplay();
         dispatch({
             type: SLIDE_PREVIOUS,
-            numberOfImages: images.length,
+            numberOfImages: list.length,
             offset: 0,
         });
     };
@@ -127,11 +126,11 @@ export const useCarousel = ({
 
     // start autoplay
     const startAutoplay = () => {
-        if (images.length >= 2 && autoplay) {
+        if (list.length >= 2 && autoplay) {
             clearInterval(timer.current);
             timer.current = window.setInterval(() => {
                 slideNext();
-            }, AUTOPLAY_INTERVAL);
+            }, interval);
         }
     };
 
@@ -144,13 +143,13 @@ export const useCarousel = ({
         buffer: { clientY: 0, clientX: carouselWidth.current },
         onSwipeStart: () => clearAutoplay(),
         onSwipe: (e) => {
-            if (images.length < 2) {
+            if (list.length < 2) {
                 return;
             }
             dispatch({ type: SET_OFFSET, offset: swipeAmount, withAnimation: false });
         },
         onSwipeEnd: () => {
-            if (images.length < 2 || !direction) {
+            if (list.length < 2 || !direction) {
                 return;
             }
 
@@ -162,7 +161,7 @@ export const useCarousel = ({
                     ? swipeEndPosition - Math.trunc(swipeEndPosition)
                     : 1 - (swipeEndPosition - Math.trunc(swipeEndPosition));
 
-            if (Math.abs(swipeEndFraction) > SWIPE_THRESHOLD) {
+            if (Math.abs(swipeEndFraction) > swipeThreshold) {
                 // successful swipe
                 const jumpDistance =
                     direction === DIRECTIONS.RIGHT ? 0 : carouselWidth.current * 2;
@@ -173,7 +172,7 @@ export const useCarousel = ({
                     type: SWIPE_SUCCESS,
                     offset: jumpDistance,
                     action,
-                    numberOfImages: images.length,
+                    numberOfImages: list.length,
                 });
             } else {
                 // fail
@@ -186,8 +185,8 @@ export const useCarousel = ({
     const onTransitionEnd = () => {
         if (state.shouldUpdateArray) {
             const reverse = state.lastAction === ACTION.NEXT ? false : true;
-            const items = manipulateArray(state.items, reverse);
-            dispatch({ type: UPDATE_ITEMS, items });
+            const slides = manipulateArray(state.slides, reverse);
+            dispatch({ type: UPDATE_ITEMS, slides });
         }
 
         resetOffset();
@@ -210,7 +209,7 @@ export const useCarousel = ({
         slideNext,
         slidePrev,
         currentImage: state.current,
-        items: state.items.slice(0, 3),
+        slides: state.slides.slice(0, 3),
         slideToImage: (imageToSlide: number) => slideToImage(imageToSlide),
     };
 };

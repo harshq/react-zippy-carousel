@@ -31,7 +31,7 @@ export const carouselReducer = (
             return {
                 ...state,
                 offset: action.offset,
-                items: action.items,
+                slides: action.slides,
 
                 shouldUpdateArray: false,
                 lastAction: undefined,
@@ -99,7 +99,7 @@ export const carouselReducer = (
         case UPDATE_ITEMS: {
             return {
                 ...state,
-                items: action.items,
+                slides: action.slides,
                 shouldUpdateArray: false,
                 lastAction: undefined,
             };
