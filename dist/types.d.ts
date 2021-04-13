@@ -27,7 +27,7 @@ export interface CarouselProps {
     autoplay?: boolean;
     list: any[];
     interval?: number;
-    swipeThreshhold?: number;
+    swipeThreshold?: number;
 }
 export interface CarouselState {
     slides: any[];

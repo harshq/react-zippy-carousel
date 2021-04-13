@@ -24,11 +24,10 @@ const {
   withAnimation,
   slideNext,
   slidePrev,
-  items,
+  slides
 } = useCarousel({
-  images: ['#98ddca', '#d5ecc2', '#ffd3b4', '#ffaaa7'],
+  list: ['#98ddca', '#d5ecc2', '#ffd3b4', '#ffaaa7'],
   carouselContainerRef,
-  autoplay: true,
 });
           
 ```

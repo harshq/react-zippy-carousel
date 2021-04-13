@@ -272,7 +272,7 @@ var initialCarouselState = {
  *
  */
 var useCarousel = function (_a) {
-    var carouselContainerRef = _a.carouselContainerRef, list = _a.list, _b = _a.autoplay, autoplay = _b === void 0 ? false : _b, _c = _a.interval, interval = _c === void 0 ? 5000 : _c, _d = _a.swipeThreshhold, swipeThreshhold = _d === void 0 ? 0.3 : _d;
+    var carouselContainerRef = _a.carouselContainerRef, list = _a.list, _b = _a.autoplay, autoplay = _b === void 0 ? false : _b, _c = _a.interval, interval = _c === void 0 ? 5000 : _c, _d = _a.swipeThreshold, swipeThreshold = _d === void 0 ? 0.3 : _d;
     // keeps the timer
     var timer = React.useRef(0);
     // keeps the slider width
@@ -360,7 +360,7 @@ var useCarousel = function (_a) {
             var swipeEndFraction = direction === DIRECTIONS.LEFT
                 ? swipeEndPosition - Math.trunc(swipeEndPosition)
                 : 1 - (swipeEndPosition - Math.trunc(swipeEndPosition));
-            if (Math.abs(swipeEndFraction) > swipeThreshhold) {
+            if (Math.abs(swipeEndFraction) > swipeThreshold) {
                 // successful swipe
                 var jumpDistance = direction === DIRECTIONS.RIGHT ? 0 : carouselWidth.current * 2;
                 var action = direction === DIRECTIONS.RIGHT ? ACTION.PREV : ACTION.NEXT;
