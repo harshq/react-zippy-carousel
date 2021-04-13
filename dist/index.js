@@ -221,7 +221,7 @@ var initalizeImageArray = function (items) {
 };
 
 /*
- * The Slider state holds following info.
+ * The carousel state holds following info.
  * items: rotated images array
  * offset: current user swipe value/scroll value
  * current: active image now
@@ -277,7 +277,7 @@ var initialCarouselState = {
     shouldUpdateArray: false,
 };
 /**
- * useSlider - THE carousel helper that you'll ever need ;)
+ * useCarousel - THE carousel helper that you'll ever need ;)
  *
  * useSlider is a react hook that helps you build circular carousels. It internally makes use
  * of the useSwipe hook. It Assumes that you have an unsorted list with list items. But not
@@ -302,26 +302,26 @@ var initialCarouselState = {
  *
  */
 var useCarousel = function (_a) {
-    var sliderContainerRef = _a.sliderContainerRef, images = _a.images, _b = _a.autoplay, autoplay = _b === void 0 ? false : _b;
+    var carouselContainerRef = _a.carouselContainerRef, images = _a.images, _b = _a.autoplay, autoplay = _b === void 0 ? false : _b;
     // keeps the timer
     var timer = React__namespace.useRef(0);
     // keeps the slider width
-    var sliderWidth = React__namespace.useRef(0);
+    var carouselWidth = React__namespace.useRef(0);
     // init autoplay
     React__namespace.useEffect(function () { return startAutoplay(); }, []);
     // reducer to keep the slider state
     var _c = React__namespace.useReducer(carouselReducer, initialCarouselState), state = _c[0], dispatch = _c[1];
     var init = function () {
-        sliderWidth.current = sliderContainerRef.current
-            ? sliderContainerRef.current.offsetWidth
+        carouselWidth.current = carouselContainerRef.current
+            ? carouselContainerRef.current.offsetWidth
             : 0;
         var items = initalizeImageArray(images);
-        dispatch({ type: INIT, offset: sliderWidth.current, items: items });
+        dispatch({ type: INIT, offset: carouselWidth.current, items: items });
     };
     // Starting point on the slider
     // Will update if the slider width or images array changed
     React__namespace.useEffect(init, [
-        sliderContainerRef.current ? sliderContainerRef.current.offsetWidth : 0,
+        carouselContainerRef.current ? carouselContainerRef.current.offsetWidth : 0,
         images.length,
     ]);
     // goto next slide width animation
@@ -335,7 +335,7 @@ var useCarousel = function (_a) {
         dispatch({
             type: SLIDE_NEXT,
             numberOfImages: images.length,
-            offset: sliderWidth.current * 2,
+            offset: carouselWidth.current * 2,
         });
     };
     // goto previous slide width animation
@@ -373,7 +373,7 @@ var useCarousel = function (_a) {
     };
     var _d = useTouchGesture({
         shouldStopListening: state.withAnimation,
-        buffer: { clientY: 0, clientX: sliderWidth.current },
+        buffer: { clientY: 0, clientX: carouselWidth.current },
         onSwipeStart: function () { return clearAutoplay(); },
         onSwipe: function (e) {
             if (images.length < 2) {
@@ -386,13 +386,13 @@ var useCarousel = function (_a) {
                 return;
             }
             startAutoplay();
-            var swipeEndPosition = swipeAmount / sliderWidth.current;
+            var swipeEndPosition = swipeAmount / carouselWidth.current;
             var swipeEndFraction = direction === DIRECTIONS.LEFT
                 ? swipeEndPosition - Math.trunc(swipeEndPosition)
                 : 1 - (swipeEndPosition - Math.trunc(swipeEndPosition));
             if (Math.abs(swipeEndFraction) > SWIPE_THRESHOLD) {
                 // successful swipe
-                var jumpDistance = direction === DIRECTIONS.RIGHT ? 0 : sliderWidth.current * 2;
+                var jumpDistance = direction === DIRECTIONS.RIGHT ? 0 : carouselWidth.current * 2;
                 var action = direction === DIRECTIONS.RIGHT ? ACTION.PREV : ACTION.NEXT;
                 dispatch({
                     type: SWIPE_SUCCESS,
@@ -403,7 +403,7 @@ var useCarousel = function (_a) {
             }
             else {
                 // fail
-                dispatch({ type: SWIPE_FAIL, offset: sliderWidth.current });
+                dispatch({ type: SWIPE_FAIL, offset: carouselWidth.current });
             }
         },
     }), handlers = _d.handlers, swipeAmount = _d.swipeAmount, direction = _d.direction;
@@ -420,7 +420,7 @@ var useCarousel = function (_a) {
     var resetOffset = function () {
         dispatch({
             type: SET_OFFSET,
-            offset: sliderWidth.current,
+            offset: carouselWidth.current,
             withAnimation: false,
         });
     };

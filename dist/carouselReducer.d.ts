@@ -1,2 +1,2 @@
-import { SliderState, SliderAction } from './types';
-export declare const carouselReducer: (state: SliderState, action: SliderAction) => SliderState;
+import { CarouselState, CarouselAction } from './types';
+export declare const carouselReducer: (state: CarouselState, action: CarouselAction) => CarouselState;

@@ -11,7 +11,7 @@ import {
     SWIPE_FAIL,
     UPDATE_ITEMS
 } from './constants';
-import { SliderProps, SliderState } from './types';
+import { CarouselProps, CarouselState } from './types';
 import { useTouchGesture } from './useTouchGesture';
 import { carouselReducer } from './carouselReducer';
 import { initalizeImageArray, manipulateArray } from './utils';
@@ -19,7 +19,7 @@ import { initalizeImageArray, manipulateArray } from './utils';
 const AUTOPLAY_INTERVAL = 5000;
 const SWIPE_THRESHOLD = 0.3;
 
-const initialCarouselState: SliderState = {
+const initialCarouselState: CarouselState = {
     items: [],
     offset: 0,
     current: 0,
@@ -30,7 +30,7 @@ const initialCarouselState: SliderState = {
 };
 
 /**
- * useSlider - THE carousel helper that you'll ever need ;)
+ * useCarousel - THE carousel helper that you'll ever need ;)
  *
  * useSlider is a react hook that helps you build circular carousels. It internally makes use
  * of the useSwipe hook. It Assumes that you have an unsorted list with list items. But not
@@ -55,14 +55,14 @@ const initialCarouselState: SliderState = {
  *
  */
 export const useCarousel = ({
-    sliderContainerRef,
+    carouselContainerRef,
     images,
     autoplay = false,
-}: SliderProps) => {
+}: CarouselProps) => {
     // keeps the timer
     const timer = React.useRef(0);
     // keeps the slider width
-    const sliderWidth = React.useRef(0);
+    const carouselWidth = React.useRef(0);
     // init autoplay
     React.useEffect(() => startAutoplay(), []);
     // reducer to keep the slider state
@@ -72,18 +72,18 @@ export const useCarousel = ({
     );
 
     const init = () => {
-        sliderWidth.current = sliderContainerRef.current
-            ? sliderContainerRef.current.offsetWidth
+        carouselWidth.current = carouselContainerRef.current
+            ? carouselContainerRef.current.offsetWidth
             : 0;
 
         const items = initalizeImageArray(images);
-        dispatch({ type: INIT, offset: sliderWidth.current, items });
+        dispatch({ type: INIT, offset: carouselWidth.current, items });
     };
 
     // Starting point on the slider
     // Will update if the slider width or images array changed
     React.useEffect(init, [
-        sliderContainerRef.current ? sliderContainerRef.current.offsetWidth : 0,
+        carouselContainerRef.current ? carouselContainerRef.current.offsetWidth : 0,
         images.length,
     ]);
 
@@ -98,7 +98,7 @@ export const useCarousel = ({
         dispatch({
             type: SLIDE_NEXT,
             numberOfImages: images.length,
-            offset: sliderWidth.current * 2,
+            offset: carouselWidth.current * 2,
         });
     };
 
@@ -141,7 +141,7 @@ export const useCarousel = ({
 
     const { handlers, swipeAmount, direction } = useTouchGesture({
         shouldStopListening: state.withAnimation,
-        buffer: { clientY: 0, clientX: sliderWidth.current },
+        buffer: { clientY: 0, clientX: carouselWidth.current },
         onSwipeStart: () => clearAutoplay(),
         onSwipe: (e) => {
             if (images.length < 2) {
@@ -156,7 +156,7 @@ export const useCarousel = ({
 
             startAutoplay();
 
-            const swipeEndPosition = swipeAmount / sliderWidth.current;
+            const swipeEndPosition = swipeAmount / carouselWidth.current;
             const swipeEndFraction =
                 direction === DIRECTIONS.LEFT
                     ? swipeEndPosition - Math.trunc(swipeEndPosition)
@@ -165,7 +165,7 @@ export const useCarousel = ({
             if (Math.abs(swipeEndFraction) > SWIPE_THRESHOLD) {
                 // successful swipe
                 const jumpDistance =
-                    direction === DIRECTIONS.RIGHT ? 0 : sliderWidth.current * 2;
+                    direction === DIRECTIONS.RIGHT ? 0 : carouselWidth.current * 2;
                 const action =
                     direction === DIRECTIONS.RIGHT ? ACTION.PREV : ACTION.NEXT;
 
@@ -177,7 +177,7 @@ export const useCarousel = ({
                 });
             } else {
                 // fail
-                dispatch({ type: SWIPE_FAIL, offset: sliderWidth.current });
+                dispatch({ type: SWIPE_FAIL, offset: carouselWidth.current });
             }
         },
     });
@@ -197,7 +197,7 @@ export const useCarousel = ({
     const resetOffset = () => {
         dispatch({
             type: SET_OFFSET,
-            offset: sliderWidth.current,
+            offset: carouselWidth.current,
             withAnimation: false,
         });
     };

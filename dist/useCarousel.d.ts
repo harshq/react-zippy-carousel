@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { SliderProps } from './types';
+import { CarouselProps } from './types';
 /**
- * useSlider - THE carousel helper that you'll ever need ;)
+ * useCarousel - THE carousel helper that you'll ever need ;)
  *
  * useSlider is a react hook that helps you build circular carousels. It internally makes use
  * of the useSwipe hook. It Assumes that you have an unsorted list with list items. But not
@@ -25,7 +25,7 @@ import { SliderProps } from './types';
  * @returns items: 3 or less element array that.
  *
  */
-export declare const useCarousel: ({ sliderContainerRef, images, autoplay, }: SliderProps) => {
+export declare const useCarousel: ({ carouselContainerRef, images, autoplay, }: CarouselProps) => {
     handlers: {
         onTouchStart: (e: React.TouchEvent<Element>) => void;
         onTouchMove: (e: React.TouchEvent<Element>) => void;

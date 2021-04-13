@@ -42,14 +42,14 @@ export interface SwipeHandlers {
     onTouchCancel: (e: React.TouchEvent<Element>) => void;
 }
 
-export interface SliderProps {
-    sliderContainerRef: React.RefObject<HTMLDivElement>;
+export interface CarouselProps {
+    carouselContainerRef: React.RefObject<HTMLDivElement>;
     autoplay?: boolean;
     // tslint:disable-next-line: no-any
     images: any[];
 }
 
-export interface SliderState {
+export interface CarouselState {
     // tslint:disable-next-line: no-any
     items: any[];
     offset: number;
@@ -147,7 +147,7 @@ interface UpdateArray {
     items: any[];
 }
 
-export type SliderAction =
+export type CarouselAction =
     | Init
     | SetOffset
     | SwipeSuccess

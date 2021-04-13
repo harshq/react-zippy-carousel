@@ -22,12 +22,12 @@ export interface SwipeHandlers {
     onTouchEnd: (e: React.TouchEvent<Element>) => void;
     onTouchCancel: (e: React.TouchEvent<Element>) => void;
 }
-export interface SliderProps {
-    sliderContainerRef: React.RefObject<HTMLDivElement>;
+export interface CarouselProps {
+    carouselContainerRef: React.RefObject<HTMLDivElement>;
     autoplay?: boolean;
     images: any[];
 }
-export interface SliderState {
+export interface CarouselState {
     items: any[];
     offset: number;
     current: number;
@@ -78,5 +78,5 @@ interface UpdateArray {
     type: typeof UPDATE_ITEMS;
     items: any[];
 }
-export declare type SliderAction = Init | SetOffset | SwipeSuccess | SwipeFail | SlideNext | SlideToImage | SlidePrevious | UpdateArray;
+export declare type CarouselAction = Init | SetOffset | SwipeSuccess | SwipeFail | SlideNext | SlideToImage | SlidePrevious | UpdateArray;
 export {};

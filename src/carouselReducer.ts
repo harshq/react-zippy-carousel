@@ -1,4 +1,4 @@
-import { SliderState, SliderAction } from './types';
+import { CarouselState, CarouselAction } from './types';
 import {
     INIT,
     SLIDE_PREVIOUS,
@@ -13,7 +13,7 @@ import {
 import { calcPrev, calcNext } from './utils';
 
 /*
- * The Slider state holds following info.
+ * The carousel state holds following info.
  * items: rotated images array
  * offset: current user swipe value/scroll value
  * current: active image now
@@ -23,9 +23,9 @@ import { calcPrev, calcNext } from './utils';
  * shouldUpdateArray: This is to figure out if the swipe was successful
  */
 export const carouselReducer = (
-    state: SliderState,
-    action: SliderAction,
-): SliderState => {
+    state: CarouselState,
+    action: CarouselAction,
+): CarouselState => {
     switch (action.type) {
         case INIT: {
             return {
