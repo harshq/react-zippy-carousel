@@ -1,1 +1,1 @@
-# react-zippy-arousel
+# react-zippy-carousel
