@@ -22,13 +22,14 @@ or
 import useCarousel from 'react-zippy-carousel';
 
 const {
-  handlers,
-  listHandlers,
-  offset,
-  withAnimation,
-  slideNext,
-  slidePrev,
-  slides
+  handlers, // Listeners for 'li's
+  listHandlers, // listeners for 'ul'
+  offset, // scroll position for 'ul'
+  withAnimation, // whether you need to animate the offset
+  slideNext, // slide to next
+  slidePrev, // slider to previous
+  slides, // slides you want to render
+  current // current slide of the carousel  
 } = useCarousel({
   list: ['#98ddca', '#d5ecc2', '#ffd3b4', '#ffaaa7'],
   carouselContainerRef,
