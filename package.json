@@ -1,6 +1,6 @@
 {
   "name": "react-zippy-carousel",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
@@ -21,9 +21,15 @@
     "preset": "ts-jest",
     "testEnvironment": "node"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "carousel",
+    "react-carousel",
+    "react-carousel-hook",
+    "carousel-slider",
+    "react-carousel-component"
+  ],
+  "author": "Harshana Abeyaratne <harshana.abeyaratne@gmail.com> (https://github.com/harshq)",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/harshq/react-zippy-carousel/issues"
   },

@@ -52,11 +52,6 @@ interface SlideNext {
     offset: number;
     numberOfImages: number;
 }
-/**
- * Fired when user clicks on an image outside the context of the slider
- * like on a thumbnail list of all images
- * and we want to update the slider image to the image user clicked on
- */
 interface SlideToImage {
     type: typeof SLIDE_TO_IMAGE;
     imageToSlideTo: number;

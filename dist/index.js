@@ -70,7 +70,7 @@ var useTouchGesture = function (_a) {
             onSwipeStart(e);
         }
     };
-    // Negative value => swiped right. Positive value => swiped left.
+    // negative value => swiped right. positive value => swiped left.
     var getDirection = function (sign) {
         return sign === -1 ? DIRECTIONS.RIGHT : DIRECTIONS.LEFT;
     };
@@ -78,25 +78,26 @@ var useTouchGesture = function (_a) {
         if (shouldStopListening) {
             return;
         }
-        // get difference from the start
+        // get difference from the start touch point.
         var diffFromStartX = startTouch.clientX - e.targetTouches[0].clientX;
         var diffFromStartY = startTouch.clientY - e.targetTouches[0].clientY;
-        // if we know user is scrolling horizontally, prevent vertical scroll
+        // if the user is scrolling horizontally, prevent vertical scroll
         if (e.cancelable && Math.abs(diffFromStartX) > Math.abs(diffFromStartY)) {
             e.preventDefault();
         }
-        // swiping started. Set isSwiping flag to true.
+        // swiping started.
         setIsSwiping(true);
         // set X axis difference as swipe amount with the buffer
         setSwipeAmount(diffFromStartX + buffer.clientX);
         if (onSwipe) {
             onSwipe(e);
         }
-        // diffFromStartX will a positive or negative value depending on the
-        // direction the element was swiped to.
-        // Negative value => swiped right. Positive value => swiped left.
+        // diffFromStartX will be a positive or negative value depending on the
+        // direction the element it was swiped to.
+        // negative value => swiped right. 
+        // positive value => swiped left.
         var currentDirection = getDirection(Math.sign(diffFromStartX));
-        // if this direction is changed from the previous direction
+        // if this direction is changed from the previous direction,
         // set it as the new direction and fire the callback.
         if (direction !== currentDirection) {
             setDirection(currentDirection);
@@ -223,13 +224,14 @@ var initalizeImageArray = function (items) {
 
 /*
  * The carousel state holds following info.
- * items: rotated images array
- * offset: current user swipe value/scroll value
- * current: active image now
- * withAnimation: if the offset change needs to be animated
+ * items: rotated slides of carousel.
+ * offset: current user swipe value/scroll value.
+ * current: current slide index.
+ * withAnimation: if the offset value needs to be animated.
  *
- * lastAction: last user action. This is used to figure out the way the array was rotated and stop queuing actions
- * shouldUpdateArray: This is to figure out if the swipe was successful
+ * lastAction: last user action. This is used to figure out the way 'items'
+ *             array was rotated and to stop queuing actions.
+ * shouldUpdateArray: This is to figure out if the swipe was successful.
  */
 var carouselReducer = function (state, action) {
     switch (action.type) {
@@ -276,19 +278,23 @@ var initialCarouselState = {
     shouldUpdateArray: false,
 };
 /**
- * useCarousel - THE carousel helper that you'll ever need ;)
+ * useCarousel - THE carousel hook that you'll ever need ;)
  *
- * useSlider is a react hook that helps you build circular carousels. It internally makes use
- * of the useSwipe hook. It Assumes that you have an unsorted list with list items. But not
- * necessarily. useSlider will always return less than 3 items. Users will always see the
- * 2nd element in items array.
+ * useSlider is a react hook for circular carousels. It assumes you have a
+ * unsorted list (ul) with list items (li) as the HTML template for the
+ * carousel.
  *
- * This accepts couple of things as required props.
+ * This hook will return only 3 items of less at any given point as slides.
+ * User will see the 2nd element in sliders array, allowing us to animate
+ * to next and previous slides.
  *
- * @prop sliderContainerRef: ref object of the carousel container. This will be used to figure out
- *                           scroll distance when navigating to next/prev slide.
- * @prop images: array of items for the carousel.
- * @prop autoplay: optional boolean param to enable autoplay.
+ * Once moved to next/prev slides, we update the slides array again so that,
+ * the slide we moved to is in the middle, and the next and prev slides are
+ * on both sides.
+ *
+ * @prop sliderContainerRef: Required! ref object of the carousel container.
+ * @prop list: Required! array of items for the carousel.
+ * @prop autoplay: Optional! boolean param to enable autoplay.
  *
  * @returns handlers: Listeners for 'li's
  * @returns listHandlers: Listeners for 'ul'
@@ -304,11 +310,11 @@ var useCarousel = function (_a) {
     var carouselContainerRef = _a.carouselContainerRef, list = _a.list, _b = _a.autoplay, autoplay = _b === void 0 ? false : _b, _c = _a.interval, interval = _c === void 0 ? 5000 : _c, _d = _a.swipeThreshold, swipeThreshold = _d === void 0 ? 0.3 : _d;
     // keeps the timer
     var timer = React__namespace.useRef(0);
-    // keeps the slider width
+    // keeps the carousel width
     var carouselWidth = React__namespace.useRef(0);
     // init autoplay
     React__namespace.useEffect(function () { return startAutoplay(); }, []);
-    // reducer to keep the slider state
+    // reducer to keep the carousel state
     var _e = React__namespace.useReducer(carouselReducer, initialCarouselState), state = _e[0], dispatch = _e[1];
     var init = function () {
         carouselWidth.current = carouselContainerRef.current
@@ -317,12 +323,12 @@ var useCarousel = function (_a) {
         var slides = initalizeImageArray(list);
         dispatch({ type: INIT, offset: carouselWidth.current, slides: slides });
     };
-    // Starting point on the slider
-    // Will update if the slider width or images array changed
+    // starting point
     React__namespace.useEffect(init, [
         carouselContainerRef.current ? carouselContainerRef.current.offsetWidth : 0,
         list.length,
     ]);
+    // useTouchGesture is a helper method to support gestures
     var _f = useTouchGesture({
         shouldStopListening: state.withAnimation,
         buffer: { clientY: 0, clientX: carouselWidth.current },
@@ -349,7 +355,7 @@ var useCarousel = function (_a) {
             ? swipeEndPosition - Math.trunc(swipeEndPosition)
             : 1 - (swipeEndPosition - Math.trunc(swipeEndPosition));
         if (Math.abs(swipeEndFraction) > swipeThreshold) {
-            // successful swipe
+            // successful swipe; animate to next slide
             var jumpDistance = direction === DIRECTIONS.RIGHT ? 0 : carouselWidth.current * 2;
             var action = direction === DIRECTIONS.RIGHT ? ACTION.PREV : ACTION.NEXT;
             dispatch({
@@ -360,7 +366,7 @@ var useCarousel = function (_a) {
             });
         }
         else {
-            // fail
+            // didn't meet the threshold; reset the swipe
             dispatch({ type: SWIPE_FAIL, offset: carouselWidth.current });
         }
     };
@@ -375,9 +381,8 @@ var useCarousel = function (_a) {
     var clearAutoplay = function () {
         clearInterval(timer.current);
     };
-    // goto next slide with animation
-    // restart autoplay
-    // if the 'state.lastAction' is not cleared or array has 1 image, prevent action
+    // go to next slide with animation
+    // if 'state.lastAction' is not cleared or array has 1 image, prevent action
     var slideNext = function () {
         if (state.lastAction || list.length < 2) {
             return;
@@ -390,8 +395,7 @@ var useCarousel = function (_a) {
         });
     };
     // go to previous slide with animation
-    // restart autoplay
-    // if the 'state.lastAction' is not cleared or array has 1 image, prevent action
+    // if 'state.lastAction' is not cleared or array has 1 image, prevent action
     var slidePrev = function () {
         if (state.lastAction || list.length < 2) {
             return;
@@ -434,7 +438,7 @@ var useCarousel = function (_a) {
         withAnimation: state.withAnimation,
         slideNext: slideNext,
         slidePrev: slidePrev,
-        currentImage: state.current,
+        current: state.current,
         slides: state.slides.slice(0, 3),
         slideToImage: function (imageToSlide) { return slideToImage(imageToSlide); },
     };

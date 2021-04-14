@@ -14,13 +14,14 @@ import { calcPrev, calcNext } from './utils';
 
 /*
  * The carousel state holds following info.
- * items: rotated images array
- * offset: current user swipe value/scroll value
- * current: active image now
- * withAnimation: if the offset change needs to be animated
+ * items: rotated slides of carousel.
+ * offset: current user swipe value/scroll value.
+ * current: current slide index.
+ * withAnimation: if the offset value needs to be animated.
  *
- * lastAction: last user action. This is used to figure out the way the array was rotated and stop queuing actions
- * shouldUpdateArray: This is to figure out if the swipe was successful
+ * lastAction: last user action. This is used to figure out the way 'items' 
+ *             array was rotated and to stop queuing actions.
+ * shouldUpdateArray: This is to figure out if the swipe was successful.
  */
 export const carouselReducer = (
     state: CarouselState,

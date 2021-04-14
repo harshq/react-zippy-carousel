@@ -62,11 +62,6 @@ export interface CarouselState {
     shouldUpdateArray: boolean;
 }
 
-/*
- * Fired on init
- * offset: set to sliderWidth. Users see the 2nd element in the list initially
- * slides: initial slides array after initalizeImageArray method
- */
 interface Init {
     type: typeof INIT;
     offset: number;
@@ -74,44 +69,23 @@ interface Init {
     slides: any[];
 }
 
-/*
- * Fired when user click prev
- * offset: set to 0. User should see the carousel animated to 1st element
- * numberOfImages: number of slides in the passed array. Used to calculate the prev index
- */
 interface SlidePrevious {
     type: typeof SLIDE_PREVIOUS;
     offset: number;
     numberOfImages: number;
 }
 
-/*
- * Fired when user click prev
- * offset: set to (sliderWidth * 2). User should see the carousel animated to 3rd element
- * numberOfImages: number of slides in the passed array. Used to calculate the prev index
- */
 interface SlideNext {
     type: typeof SLIDE_NEXT;
     offset: number;
     numberOfImages: number;
 }
 
-/**
- * Fired when user clicks on an image outside the context of the slider
- * like on a thumbnail list of all images
- * and we want to update the slider image to the image user clicked on
- */
 interface SlideToImage {
     type: typeof SLIDE_TO_IMAGE;
     imageToSlideTo: number;
 }
 
-/*
- * Fired when user swipes more than the SWIPE_THRESHOLD
- * offset: will be set to either 0 or (sliderWidth * 2) depending on the swiped direction.
- * action: either be next or prev
- * numberOfImages: number of slides in the passed array. Used to calculate the prev index
- */
 interface SwipeSuccess {
     type: typeof SWIPE_SUCCESS;
     offset: number;
@@ -119,30 +93,17 @@ interface SwipeSuccess {
     numberOfImages: number;
 }
 
-/*
- * Fired when user didn't more than the SWIPE_THRESHOLD
- * offset: set to sliderWidth. User should see the carousel animated back to 1st element
- */
 interface SwipeFail {
     type: typeof SWIPE_FAIL;
     offset: number;
 }
 
-/*
- * Sets a scroll position
- * offset: scroll position
- * withAnimation: if the scroll position change should animate
- */
 interface SetOffset {
     type: typeof SET_OFFSET;
     offset: number;
     withAnimation: boolean;
 }
 
-/*
- * Updates the slides array when navigated to next/prev
- * slides: new array to be set as slides
- */
 interface UpdateArray {
     type: typeof UPDATE_ITEMS;
     // tslint:disable-next-line: no-any

@@ -27,19 +27,23 @@ const initialCarouselState: CarouselState = {
 };
 
 /**
- * useCarousel - THE carousel helper that you'll ever need ;)
+ * useCarousel - THE carousel hook that you'll ever need ;)
  *
- * useSlider is a react hook that helps you build circular carousels. It internally makes use
- * of the useSwipe hook. It Assumes that you have an unsorted list with list items. But not
- * necessarily. useSlider will always return less than 3 items. Users will always see the
- * 2nd element in items array.
+ * useSlider is a react hook for circular carousels. It assumes you have a
+ * unsorted list (ul) with list items (li) as the HTML template for the 
+ * carousel.
+ * 
+ * This hook will return only 3 items of less at any given point as slides.
+ * User will see the 2nd element in sliders array, allowing us to animate 
+ * to next and previous slides.
+ * 
+ * Once moved to next/prev slides, we update the slides array again so that,
+ * the slide we moved to is in the middle, and the next and prev slides are 
+ * on both sides.
  *
- * This accepts couple of things as required props.
- *
- * @prop sliderContainerRef: ref object of the carousel container. This will be used to figure out
- *                           scroll distance when navigating to next/prev slide.
- * @prop images: array of items for the carousel.
- * @prop autoplay: optional boolean param to enable autoplay.
+ * @prop sliderContainerRef: Required! ref object of the carousel container.
+ * @prop list: Required! array of items for the carousel.
+ * @prop autoplay: Optional! boolean param to enable autoplay.
  *
  * @returns handlers: Listeners for 'li's
  * @returns listHandlers: Listeners for 'ul'
@@ -60,11 +64,11 @@ export const useCarousel = ({
 }: CarouselProps) => {
     // keeps the timer
     const timer = React.useRef(0);
-    // keeps the slider width
+    // keeps the carousel width
     const carouselWidth = React.useRef(0);
     // init autoplay
     React.useEffect(() => startAutoplay(), []);
-    // reducer to keep the slider state
+    // reducer to keep the carousel state
     const [state, dispatch] = React.useReducer(
         carouselReducer,
         initialCarouselState,
@@ -79,13 +83,13 @@ export const useCarousel = ({
         dispatch({ type: INIT, offset: carouselWidth.current, slides });
     };
 
-    // Starting point on the slider
-    // Will update if the slider width or images array changed
+    // starting point
     React.useEffect(init, [
         carouselContainerRef.current ? carouselContainerRef.current.offsetWidth : 0,
         list.length,
     ]);
 
+    // useTouchGesture is a helper method to support gestures
     const { handlers, swipeAmount, direction } = useTouchGesture({
         shouldStopListening: state.withAnimation,
         buffer: { clientY: 0, clientX: carouselWidth.current },
@@ -118,7 +122,7 @@ export const useCarousel = ({
                 : 1 - (swipeEndPosition - Math.trunc(swipeEndPosition));
 
         if (Math.abs(swipeEndFraction) > swipeThreshold) {
-            // successful swipe
+            // successful swipe; animate to next slide
             const jumpDistance =
                 direction === DIRECTIONS.RIGHT ? 0 : carouselWidth.current * 2;
             const action =
@@ -131,7 +135,7 @@ export const useCarousel = ({
                 numberOfImages: list.length,
             });
         } else {
-            // fail
+            // didn't meet the threshold; reset the swipe
             dispatch({ type: SWIPE_FAIL, offset: carouselWidth.current });
         }
     }
@@ -149,9 +153,8 @@ export const useCarousel = ({
         clearInterval(timer.current);
     };
 
-    // goto next slide with animation
-    // restart autoplay
-    // if the 'state.lastAction' is not cleared or array has 1 image, prevent action
+    // go to next slide with animation
+    // if 'state.lastAction' is not cleared or array has 1 image, prevent action
     const slideNext = () => {
         if (state.lastAction || list.length < 2) {
             return;
@@ -165,8 +168,7 @@ export const useCarousel = ({
     };
 
     // go to previous slide with animation
-    // restart autoplay
-    // if the 'state.lastAction' is not cleared or array has 1 image, prevent action
+    // if 'state.lastAction' is not cleared or array has 1 image, prevent action
     const slidePrev = () => {
         if (state.lastAction || list.length < 2) {
             return;
@@ -214,7 +216,7 @@ export const useCarousel = ({
         withAnimation: state.withAnimation,
         slideNext,
         slidePrev,
-        currentImage: state.current,
+        current: state.current,
         slides: state.slides.slice(0, 3),
         slideToImage: (imageToSlide: number) => slideToImage(imageToSlide),
     };

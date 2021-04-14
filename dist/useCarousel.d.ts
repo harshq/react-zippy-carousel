@@ -1,19 +1,23 @@
 import * as React from 'react';
 import { CarouselProps } from './types';
 /**
- * useCarousel - THE carousel helper that you'll ever need ;)
+ * useCarousel - THE carousel hook that you'll ever need ;)
  *
- * useSlider is a react hook that helps you build circular carousels. It internally makes use
- * of the useSwipe hook. It Assumes that you have an unsorted list with list items. But not
- * necessarily. useSlider will always return less than 3 items. Users will always see the
- * 2nd element in items array.
+ * useSlider is a react hook for circular carousels. It assumes you have a
+ * unsorted list (ul) with list items (li) as the HTML template for the
+ * carousel.
  *
- * This accepts couple of things as required props.
+ * This hook will return only 3 items of less at any given point as slides.
+ * User will see the 2nd element in sliders array, allowing us to animate
+ * to next and previous slides.
  *
- * @prop sliderContainerRef: ref object of the carousel container. This will be used to figure out
- *                           scroll distance when navigating to next/prev slide.
- * @prop images: array of items for the carousel.
- * @prop autoplay: optional boolean param to enable autoplay.
+ * Once moved to next/prev slides, we update the slides array again so that,
+ * the slide we moved to is in the middle, and the next and prev slides are
+ * on both sides.
+ *
+ * @prop sliderContainerRef: Required! ref object of the carousel container.
+ * @prop list: Required! array of items for the carousel.
+ * @prop autoplay: Optional! boolean param to enable autoplay.
  *
  * @returns handlers: Listeners for 'li's
  * @returns listHandlers: Listeners for 'ul'
@@ -39,7 +43,7 @@ export declare const useCarousel: ({ carouselContainerRef, list, autoplay, inter
     withAnimation: boolean;
     slideNext: () => void;
     slidePrev: () => void;
-    currentImage: number;
+    current: number;
     slides: any[];
     slideToImage: (imageToSlide: number) => void;
 };
