@@ -86,7 +86,70 @@ export const useCarousel = ({
         list.length,
     ]);
 
-    // goto next slide width animation
+    const { handlers, swipeAmount, direction } = useTouchGesture({
+        shouldStopListening: state.withAnimation,
+        buffer: { clientY: 0, clientX: carouselWidth.current },
+        onSwipeStart: () => handleSwipeStart(),
+        onSwipeEnd: () => handleSwipeEnd()
+    });
+
+    // update offset based on swipeAmount
+    React.useEffect(() => {
+        if (list.length < 2) {
+            return;
+        }
+        dispatch({ type: SET_OFFSET, offset: swipeAmount, withAnimation: false });
+    }, [swipeAmount])
+
+    const handleSwipeStart = () => {
+        clearAutoplay()
+    }
+
+    const handleSwipeEnd = () => {
+        if (list.length < 2 || !direction) {
+            return;
+        }
+
+        startAutoplay();
+        const swipeEndPosition = swipeAmount / carouselWidth.current;
+        const swipeEndFraction =
+            direction === DIRECTIONS.LEFT
+                ? swipeEndPosition - Math.trunc(swipeEndPosition)
+                : 1 - (swipeEndPosition - Math.trunc(swipeEndPosition));
+
+        if (Math.abs(swipeEndFraction) > swipeThreshold) {
+            // successful swipe
+            const jumpDistance =
+                direction === DIRECTIONS.RIGHT ? 0 : carouselWidth.current * 2;
+            const action =
+                direction === DIRECTIONS.RIGHT ? ACTION.PREV : ACTION.NEXT;
+
+            dispatch({
+                type: SWIPE_SUCCESS,
+                offset: jumpDistance,
+                action,
+                numberOfImages: list.length,
+            });
+        } else {
+            // fail
+            dispatch({ type: SWIPE_FAIL, offset: carouselWidth.current });
+        }
+    }
+
+    const startAutoplay = () => {
+        if (list.length >= 2 && autoplay) {
+            clearInterval(timer.current);
+            timer.current = window.setInterval(() => {
+                slideNext();
+            }, interval);
+        }
+    };
+
+    const clearAutoplay = () => {
+        clearInterval(timer.current);
+    };
+
+    // goto next slide with animation
     // restart autoplay
     // if the 'state.lastAction' is not cleared or array has 1 image, prevent action
     const slideNext = () => {
@@ -101,7 +164,7 @@ export const useCarousel = ({
         });
     };
 
-    // goto previous slide width animation
+    // go to previous slide with animation
     // restart autoplay
     // if the 'state.lastAction' is not cleared or array has 1 image, prevent action
     const slidePrev = () => {
@@ -116,7 +179,7 @@ export const useCarousel = ({
         });
     };
 
-    // goto a specific image in the carousel
+    // go to a specific slide in the carousel
     const slideToImage = (imageToSlideTo: number) => {
         dispatch({
             type: SLIDE_TO_IMAGE,
@@ -124,62 +187,14 @@ export const useCarousel = ({
         });
     };
 
-    // start autoplay
-    const startAutoplay = () => {
-        if (list.length >= 2 && autoplay) {
-            clearInterval(timer.current);
-            timer.current = window.setInterval(() => {
-                slideNext();
-            }, interval);
-        }
+    // jump back to the middle
+    const resetOffset = () => {
+        dispatch({
+            type: SET_OFFSET,
+            offset: carouselWidth.current,
+            withAnimation: false,
+        });
     };
-
-    const clearAutoplay = () => {
-        clearInterval(timer.current);
-    };
-
-    const { handlers, swipeAmount, direction } = useTouchGesture({
-        shouldStopListening: state.withAnimation,
-        buffer: { clientY: 0, clientX: carouselWidth.current },
-        onSwipeStart: () => clearAutoplay(),
-        onSwipe: (e) => {
-            if (list.length < 2) {
-                return;
-            }
-            dispatch({ type: SET_OFFSET, offset: swipeAmount, withAnimation: false });
-        },
-        onSwipeEnd: () => {
-            if (list.length < 2 || !direction) {
-                return;
-            }
-
-            startAutoplay();
-
-            const swipeEndPosition = swipeAmount / carouselWidth.current;
-            const swipeEndFraction =
-                direction === DIRECTIONS.LEFT
-                    ? swipeEndPosition - Math.trunc(swipeEndPosition)
-                    : 1 - (swipeEndPosition - Math.trunc(swipeEndPosition));
-
-            if (Math.abs(swipeEndFraction) > swipeThreshold) {
-                // successful swipe
-                const jumpDistance =
-                    direction === DIRECTIONS.RIGHT ? 0 : carouselWidth.current * 2;
-                const action =
-                    direction === DIRECTIONS.RIGHT ? ACTION.PREV : ACTION.NEXT;
-
-                dispatch({
-                    type: SWIPE_SUCCESS,
-                    offset: jumpDistance,
-                    action,
-                    numberOfImages: list.length,
-                });
-            } else {
-                // fail
-                dispatch({ type: SWIPE_FAIL, offset: carouselWidth.current });
-            }
-        },
-    });
 
     // onTransitionEnd handler for 'ul'
     const onTransitionEnd = () => {
@@ -190,15 +205,6 @@ export const useCarousel = ({
         }
 
         resetOffset();
-    };
-
-    // jump back to the middle
-    const resetOffset = () => {
-        dispatch({
-            type: SET_OFFSET,
-            offset: carouselWidth.current,
-            withAnimation: false,
-        });
     };
 
     return {

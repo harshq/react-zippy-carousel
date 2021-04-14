@@ -53,6 +53,7 @@ var useTouchGesture = function (_a) {
         // get difference from the start
         var diffFromStartX = startTouch.clientX - e.targetTouches[0].clientX;
         var diffFromStartY = startTouch.clientY - e.targetTouches[0].clientY;
+        // if we know user is scrolling horizontally, prevent vertical scroll
         if (e.cancelable && Math.abs(diffFromStartX) > Math.abs(diffFromStartY)) {
             e.preventDefault();
         }
@@ -294,7 +295,59 @@ var useCarousel = function (_a) {
         carouselContainerRef.current ? carouselContainerRef.current.offsetWidth : 0,
         list.length,
     ]);
-    // goto next slide width animation
+    var _f = useTouchGesture({
+        shouldStopListening: state.withAnimation,
+        buffer: { clientY: 0, clientX: carouselWidth.current },
+        onSwipeStart: function () { return handleSwipeStart(); },
+        onSwipeEnd: function () { return handleSwipeEnd(); }
+    }), handlers = _f.handlers, swipeAmount = _f.swipeAmount, direction = _f.direction;
+    // update offset based on swipeAmount
+    React.useEffect(function () {
+        if (list.length < 2) {
+            return;
+        }
+        dispatch({ type: SET_OFFSET, offset: swipeAmount, withAnimation: false });
+    }, [swipeAmount]);
+    var handleSwipeStart = function () {
+        clearAutoplay();
+    };
+    var handleSwipeEnd = function () {
+        if (list.length < 2 || !direction) {
+            return;
+        }
+        startAutoplay();
+        var swipeEndPosition = swipeAmount / carouselWidth.current;
+        var swipeEndFraction = direction === DIRECTIONS.LEFT
+            ? swipeEndPosition - Math.trunc(swipeEndPosition)
+            : 1 - (swipeEndPosition - Math.trunc(swipeEndPosition));
+        if (Math.abs(swipeEndFraction) > swipeThreshold) {
+            // successful swipe
+            var jumpDistance = direction === DIRECTIONS.RIGHT ? 0 : carouselWidth.current * 2;
+            var action = direction === DIRECTIONS.RIGHT ? ACTION.PREV : ACTION.NEXT;
+            dispatch({
+                type: SWIPE_SUCCESS,
+                offset: jumpDistance,
+                action: action,
+                numberOfImages: list.length,
+            });
+        }
+        else {
+            // fail
+            dispatch({ type: SWIPE_FAIL, offset: carouselWidth.current });
+        }
+    };
+    var startAutoplay = function () {
+        if (list.length >= 2 && autoplay) {
+            clearInterval(timer.current);
+            timer.current = window.setInterval(function () {
+                slideNext();
+            }, interval);
+        }
+    };
+    var clearAutoplay = function () {
+        clearInterval(timer.current);
+    };
+    // goto next slide with animation
     // restart autoplay
     // if the 'state.lastAction' is not cleared or array has 1 image, prevent action
     var slideNext = function () {
@@ -308,7 +361,7 @@ var useCarousel = function (_a) {
             offset: carouselWidth.current * 2,
         });
     };
-    // goto previous slide width animation
+    // go to previous slide with animation
     // restart autoplay
     // if the 'state.lastAction' is not cleared or array has 1 image, prevent action
     var slidePrev = function () {
@@ -322,69 +375,12 @@ var useCarousel = function (_a) {
             offset: 0,
         });
     };
-    // goto a specific image in the carousel
+    // go to a specific slide in the carousel
     var slideToImage = function (imageToSlideTo) {
         dispatch({
             type: SLIDE_TO_IMAGE,
             imageToSlideTo: imageToSlideTo,
         });
-    };
-    // start autoplay
-    var startAutoplay = function () {
-        if (list.length >= 2 && autoplay) {
-            clearInterval(timer.current);
-            timer.current = window.setInterval(function () {
-                slideNext();
-            }, interval);
-        }
-    };
-    var clearAutoplay = function () {
-        clearInterval(timer.current);
-    };
-    var _f = useTouchGesture({
-        shouldStopListening: state.withAnimation,
-        buffer: { clientY: 0, clientX: carouselWidth.current },
-        onSwipeStart: function () { return clearAutoplay(); },
-        onSwipe: function (e) {
-            if (list.length < 2) {
-                return;
-            }
-            dispatch({ type: SET_OFFSET, offset: swipeAmount, withAnimation: false });
-        },
-        onSwipeEnd: function () {
-            if (list.length < 2 || !direction) {
-                return;
-            }
-            startAutoplay();
-            var swipeEndPosition = swipeAmount / carouselWidth.current;
-            var swipeEndFraction = direction === DIRECTIONS.LEFT
-                ? swipeEndPosition - Math.trunc(swipeEndPosition)
-                : 1 - (swipeEndPosition - Math.trunc(swipeEndPosition));
-            if (Math.abs(swipeEndFraction) > swipeThreshold) {
-                // successful swipe
-                var jumpDistance = direction === DIRECTIONS.RIGHT ? 0 : carouselWidth.current * 2;
-                var action = direction === DIRECTIONS.RIGHT ? ACTION.PREV : ACTION.NEXT;
-                dispatch({
-                    type: SWIPE_SUCCESS,
-                    offset: jumpDistance,
-                    action: action,
-                    numberOfImages: list.length,
-                });
-            }
-            else {
-                // fail
-                dispatch({ type: SWIPE_FAIL, offset: carouselWidth.current });
-            }
-        },
-    }), handlers = _f.handlers, swipeAmount = _f.swipeAmount, direction = _f.direction;
-    // onTransitionEnd handler for 'ul'
-    var onTransitionEnd = function () {
-        if (state.shouldUpdateArray) {
-            var reverse = state.lastAction === ACTION.NEXT ? false : true;
-            var slides = manipulateArray(state.slides, reverse);
-            dispatch({ type: UPDATE_ITEMS, slides: slides });
-        }
-        resetOffset();
     };
     // jump back to the middle
     var resetOffset = function () {
@@ -393,6 +389,15 @@ var useCarousel = function (_a) {
             offset: carouselWidth.current,
             withAnimation: false,
         });
+    };
+    // onTransitionEnd handler for 'ul'
+    var onTransitionEnd = function () {
+        if (state.shouldUpdateArray) {
+            var reverse = state.lastAction === ACTION.NEXT ? false : true;
+            var slides = manipulateArray(state.slides, reverse);
+            dispatch({ type: UPDATE_ITEMS, slides: slides });
+        }
+        resetOffset();
     };
     return {
         handlers: handlers,

@@ -52,6 +52,7 @@ export const useTouchGesture = ({
         const diffFromStartX = startTouch.clientX - e.targetTouches[0].clientX;
         const diffFromStartY = startTouch.clientY - e.targetTouches[0].clientY;
 
+        // if we know user is scrolling horizontally, prevent vertical scroll
         if (e.cancelable && Math.abs(diffFromStartX) > Math.abs(diffFromStartY)) {
             e.preventDefault();
         }
